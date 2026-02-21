@@ -1,0 +1,36 @@
+# --- Node / Frontend / Electron ---
+node_modules/
+frontend/node_modules/
+frontend/dist/
+
+*.log
+.eslintcache
+.vite/
+
+# --- Python / Django ---
+backend/__pycache__/
+backend/*$py.class
+backend/*.py[cod]
+backend/.venv/
+backend/venv/
+backend/env/
+backend/ENV/
+backend/build/
+backend/dist/
+backend/*.spec
+# Only ignore the DB if you don't want to sync your seed data to GitHub
+# backend/db.sqlite3 
+
+# --- OS / IDE ---
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# --- Electron Builder ---
+build/*.exe
+build/*.zip
+
+release/
