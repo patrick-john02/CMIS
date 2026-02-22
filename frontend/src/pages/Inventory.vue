@@ -139,15 +139,15 @@ const saveItem = async () => {
 
     if (isEditing.value && currentItem.value.id !== null) {
       await updateItem(currentItem.value.id, payload)
-      toast.success(`${payload.name} updated successfully!`) // 👈 2. Success toast
+      toast.success(`${payload.name} updated successfully!`)
     } else {
       await createItem(payload)
-      toast.success(`${payload.name} added to inventory!`) // 👈 3. Success toast
+      toast.success(`${payload.name} added to inventory!`)
     }
     isSheetOpen.value = false
   } catch (error) {
     console.error("Failed to save item", error)
-    toast.error("Failed to save item. Please check the details and try again.") // 👈 4. Error toast
+    toast.error("Failed to save item. Please check the details and try again.")
   } finally {
     isSaving.value = false
   }
@@ -156,10 +156,10 @@ const deleteItem = async (id: number) => {
   if (confirm('Are you sure you want to delete this item? This action cannot be undone.')) {
     try {
       await apiDeleteItem(id)
-      toast.success("Item deleted successfully.") // 👈 5. Success toast
+      toast.success("Item deleted successfully.")
     } catch (error) {
       console.error("Failed to delete item", error)
-      toast.error("An error occurred while deleting the item.") // 👈 6. Error toast
+      toast.error("An error occurred while deleting the item.")
     }
   }
 }
@@ -294,58 +294,94 @@ const deleteItem = async (id: number) => {
     </div>
 
     <Sheet v-model:open="isSheetOpen">
-      <SheetContent class="sm:max-w-md overflow-y-auto">
-        <SheetHeader>
-          <SheetTitle>{{ isEditing ? 'Edit Item' : 'Add New Item' }}</SheetTitle>
-          <SheetDescription>
-            {{ isEditing ? 'Update the details of the existing inventory item.' : 'Enter the details of the new item to add to the system.' }}
-          </SheetDescription>
-        </SheetHeader>
+      <SheetContent class="sm:max-w-md overflow-hidden flex flex-col p-0 gap-0">
         
-        <form @submit.prevent="saveItem" class="flex flex-col gap-6 py-6 h-full">
-          <Field>
-            <FieldLabel for="name">Item Name</FieldLabel>
-            <Input id="name" v-model="currentItem.name" placeholder="e.g. Lavender Massage Oil" required />
-          </Field>
-
-          <Field>
-            <FieldLabel for="description">Description (Optional)</FieldLabel>
-            <Input id="description" v-model="currentItem.description" placeholder="Brief details or category" />
-          </Field>
-
-          <Field>
-            <FieldLabel for="allocation">Designated Allocation</FieldLabel>
-            <select 
-              id="allocation" 
-              v-model="currentItem.allocation_type"
-              class="flex h-9 w-full items-center justify-between whitespace-nowrap rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm ring-offset-background focus:outline-none focus:ring-1 focus:ring-ring"
-              required
-            >
-              <option value="TRAINING">Training Center</option>
-              <option value="NC2">NC II Assessment</option>
-            </select>
-          </Field>
-
-          <div class="grid grid-cols-2 gap-4">
+        <div class="px-6 py-6 sm:px-8 border-b bg-background z-10 sticky top-0">
+          <SheetHeader class="p-0">
+            <SheetTitle class="text-2xl">{{ isEditing ? 'Edit Inventory Item' : 'Add New Item' }}</SheetTitle>
+            <SheetDescription class="mt-1.5">
+              {{ isEditing ? 'Update the details of the existing inventory item.' : 'Enter the details of the new item to add to the system.' }}
+            </SheetDescription>
+          </SheetHeader>
+        </div>
+        
+        <form @submit.prevent="saveItem" class="flex flex-col h-full overflow-y-auto">
+          <div class="flex-1 px-6 py-8 sm:px-8 flex flex-col gap-6">
             <Field>
-              <FieldLabel for="quantity">Quantity</FieldLabel>
-              <Input id="quantity" type="number" v-model="currentItem.quantity" min="0" required />
+              <FieldLabel for="name" class="font-semibold">Item Name</FieldLabel>
+              <Input 
+                id="name" 
+                v-model="currentItem.name" 
+                placeholder="e.g. Lavender Massage Oil" 
+                required 
+                class="bg-muted/40 hover:bg-muted/60 focus:bg-background transition-colors"
+              />
             </Field>
 
             <Field>
-              <FieldLabel for="unit">Unit Type</FieldLabel>
-              <Input id="unit" v-model="currentItem.unit" placeholder="e.g. bottles, pcs" required />
+              <FieldLabel for="description" class="font-semibold">
+                Description <span class="text-muted-foreground font-normal ml-1">(Optional)</span>
+              </FieldLabel>
+              <Input 
+                id="description" 
+                v-model="currentItem.description" 
+                placeholder="Brief details or category" 
+                class="bg-muted/40 hover:bg-muted/60 focus:bg-background transition-colors"
+              />
             </Field>
+
+            <Field>
+              <FieldLabel for="allocation" class="font-semibold">Designated Allocation</FieldLabel>
+              <select 
+                id="allocation" 
+                v-model="currentItem.allocation_type"
+                class="flex h-10 w-full items-center justify-between whitespace-nowrap rounded-md border border-input bg-muted/40 hover:bg-muted/60 px-3 py-2 text-sm shadow-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring focus:bg-background transition-colors"
+                required
+              >
+                <option value="TRAINING">Training Center</option>
+                <option value="NC2">NC II Assessment</option>
+              </select>
+            </Field>
+
+            <div class="grid grid-cols-2 gap-5">
+              <Field>
+                <FieldLabel for="quantity" class="font-semibold">Quantity</FieldLabel>
+                <Input 
+                  id="quantity" 
+                  type="number" 
+                  v-model="currentItem.quantity" 
+                  min="0" 
+                  required 
+                  class="bg-muted/40 hover:bg-muted/60 focus:bg-background transition-colors"
+                />
+              </Field>
+
+              <Field>
+                <FieldLabel for="unit" class="font-semibold">Unit Type</FieldLabel>
+                <Input 
+                  id="unit" 
+                  v-model="currentItem.unit" 
+                  placeholder="e.g. bottles, pcs" 
+                  required 
+                  class="bg-muted/40 hover:bg-muted/60 focus:bg-background transition-colors"
+                />
+              </Field>
+            </div>
           </div>
 
-          <SheetFooter class="mt-auto pt-6">
-            <Button type="button" variant="outline" @click="isSheetOpen = false" :disabled="isSaving">Cancel</Button>
-            <Button type="submit" :disabled="isSaving">
-              <Loader2 v-if="isSaving" class="mr-2 h-4 w-4 animate-spin" />
-              {{ isEditing ? 'Save Changes' : 'Create Item' }}
-            </Button>
-          </SheetFooter>
+          <div class="px-6 py-4 sm:px-8 border-t bg-muted/20 z-10 sticky bottom-0 mt-auto">
+            <SheetFooter class="flex sm:justify-end gap-3 p-0">
+              <Button type="button" variant="outline" @click="isSheetOpen = false" :disabled="isSaving" class="w-full sm:w-auto bg-background">
+                Cancel
+              </Button>
+              <Button type="submit" :disabled="isSaving" class="w-full sm:w-auto">
+                <Loader2 v-if="isSaving" class="mr-2 h-4 w-4 animate-spin" />
+                {{ isEditing ? 'Save Changes' : 'Create Item' }}
+              </Button>
+            </SheetFooter>
+          </div>
         </form>
+
       </SheetContent>
     </Sheet>
   </div>
