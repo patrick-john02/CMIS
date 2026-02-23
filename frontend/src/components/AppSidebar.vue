@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { SidebarProps } from "@/components/ui/sidebar"
-
+import csuLogo from '@/assets/csulogo.png';
 import {
   LayoutDashboard,
   Package,
@@ -82,7 +82,7 @@ const data = {
         <SidebarMenuItem>
           <SidebarMenuButton size="lg" class="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground cursor-default hover:bg-transparent">
             <div class="flex aspect-square size-8 items-center justify-center rounded-lg bg-transparent text-sidebar-primary-foreground">
-              <img src="/csulogo.png" alt="CSU Logo" class="size-8 object-contain" />
+              <img :src="csuLogo" alt="CSU Logo" class="w-16 h-16" />
             </div>
             <div class="grid flex-1 text-left text-sm leading-tight">
               <span class="truncate font-semibold text-base">CSU-MIMS</span>
