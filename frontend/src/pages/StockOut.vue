@@ -204,73 +204,75 @@ const formatDate = (dateStr: string) => {
     </div>
 
     <Sheet v-model:open="isSheetOpen">
-      <SheetContent class="sm:max-w-md overflow-y-auto">
-        <SheetHeader>
-          <SheetTitle>Record Item Release</SheetTitle>
-          <SheetDescription>
-            Select an item to deduct from inventory. This action will be logged and the quantity automatically adjusted.
-          </SheetDescription>
-        </SheetHeader>
-        
-        <form @submit.prevent="submitTransaction" class="flex flex-col gap-6 py-6 h-full">
-          <Field>
-            <FieldLabel for="item">Select Item</FieldLabel>
-            <select 
-              id="item" 
-              v-model="currentTransaction.item"
-              class="flex h-9 w-full items-center justify-between whitespace-nowrap rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm ring-offset-background focus:outline-none focus:ring-1 focus:ring-ring"
-              required
-            >
-              <option disabled value="">Choose an inventory item...</option>
-              <option v-for="inventoryItem in items" :key="inventoryItem.id" :value="inventoryItem.id">
-                {{ inventoryItem.name }} ({{ inventoryItem.allocation_type_display || inventoryItem.allocation_type }})
-              </option>
-            </select>
-          </Field>
+  <SheetContent class="sm:max-w-md overflow-y-auto">
+    <div class="p-6">
+      <SheetHeader>
+        <SheetTitle>Record Item Release</SheetTitle>
+        <SheetDescription>
+          Select an item to deduct from inventory. This action will be logged and the quantity automatically adjusted.
+        </SheetDescription>
+      </SheetHeader>
+      
+      <form @submit.prevent="submitTransaction" class="flex flex-col gap-6 py-6 h-full">
+        <Field>
+          <FieldLabel for="item">Select Item</FieldLabel>
+          <select 
+            id="item" 
+            v-model="currentTransaction.item"
+            class="flex h-9 w-full items-center justify-between whitespace-nowrap rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm ring-offset-background focus:outline-none focus:ring-1 focus:ring-ring"
+            required
+          >
+            <option disabled value="">Choose an inventory item...</option>
+            <option v-for="inventoryItem in items" :key="inventoryItem.id" :value="inventoryItem.id">
+              {{ inventoryItem.name }} ({{ inventoryItem.allocation_type_display || inventoryItem.allocation_type }})
+            </option>
+          </select>
+        </Field>
 
-          <div v-if="selectedItem" class="rounded-md bg-muted/50 p-3 flex items-start gap-3">
-            <AlertCircle class="h-5 w-5 text-blue-500 mt-0.5" />
-            <div class="text-sm">
-              <p class="font-medium">Current Available Stock</p>
-              <p class="text-muted-foreground">
-                <span class="font-bold text-foreground">{{ selectedItem.quantity }}</span> {{ selectedItem.unit }}
-              </p>
-            </div>
-          </div>
-
-          <Field>
-            <FieldLabel for="quantity">Quantity to Release</FieldLabel>
-            <Input 
-              id="quantity" 
-              type="number" 
-              v-model="currentTransaction.quantity_deducted" 
-              :max="selectedItem?.quantity || 1"
-              min="1" 
-              required 
-            />
-            <p v-if="!isQuantityValid && selectedItem" class="text-xs text-destructive mt-1">
-              Quantity cannot exceed current stock ({{ selectedItem.quantity }}).
+        <div v-if="selectedItem" class="rounded-md bg-muted/50 p-3 flex items-start gap-3">
+          <AlertCircle class="h-5 w-5 text-blue-500 mt-0.5" />
+          <div class="text-sm">
+            <p class="font-medium">Current Available Stock</p>
+            <p class="text-muted-foreground">
+              <span class="font-bold text-foreground">{{ selectedItem.quantity }}</span> {{ selectedItem.unit }}
             </p>
-          </Field>
+          </div>
+        </div>
 
-          <Field>
-            <FieldLabel for="remarks">Remarks / Reason (Optional)</FieldLabel>
-            <Input 
-              id="remarks" 
-              v-model="currentTransaction.remarks" 
-              placeholder="e.g. For Monday morning NC II assessment..." 
-            />
-          </Field>
+        <Field>
+          <FieldLabel for="quantity">Quantity to Release</FieldLabel>
+          <Input 
+            id="quantity" 
+            type="number" 
+            v-model="currentTransaction.quantity_deducted" 
+            :max="selectedItem?.quantity || 1"
+            min="1" 
+            required 
+          />
+          <p v-if="!isQuantityValid && selectedItem" class="text-xs text-destructive mt-1">
+            Quantity cannot exceed current stock ({{ selectedItem.quantity }}).
+          </p>
+        </Field>
 
-          <SheetFooter class="mt-auto pt-6">
-            <Button type="button" variant="outline" @click="isSheetOpen = false" :disabled="isSaving">Cancel</Button>
-            <Button type="submit" :disabled="isSaving || !isQuantityValid">
-              <Loader2 v-if="isSaving" class="mr-2 h-4 w-4 animate-spin" />
-              Confirm Release
-            </Button>
-          </SheetFooter>
-        </form>
-      </SheetContent>
-    </Sheet>
+        <Field>
+          <FieldLabel for="remarks">Remarks / Reason (Optional)</FieldLabel>
+          <Input 
+            id="remarks" 
+            v-model="currentTransaction.remarks" 
+            placeholder="e.g. For Monday morning NC II assessment..." 
+          />
+        </Field>
+
+        <SheetFooter class="mt-auto pt-6">
+          <Button type="button" variant="outline" @click="isSheetOpen = false" :disabled="isSaving">Cancel</Button>
+          <Button type="submit" :disabled="isSaving || !isQuantityValid">
+            <Loader2 v-if="isSaving" class="mr-2 h-4 w-4 animate-spin" />
+            Confirm Release
+          </Button>
+        </SheetFooter>
+      </form>
+    </div>
+  </SheetContent>
+</Sheet>
   </div>
 </template>
