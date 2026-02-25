@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
-import { 
-  Plus, 
+import { ref, computed, onMounted, watch, nextTick } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+import {  
   Search, 
   MoreHorizontal, 
   Edit, 
@@ -43,14 +43,42 @@ const {
   deleteItem: apiDeleteItem 
 } = useItems()
 
+const route = useRoute()
+const router = useRouter()
+
 // Fetch data on mount
 onMounted(async () => {
   await fetchItems()
+  // Check query on mount instead of using immediate: true in watch
+  if (route.query.action === 'new') {
+    openAddModal()
+  }
+})
+
+const isSheetOpen = ref(false)
+
+// Watch for query parameters to trigger the add modal when they change
+watch(
+  () => route.query.action,
+  (action) => {
+    if (action === 'new') {
+      openAddModal()
+    }
+  }
+)
+
+// Clear the query parameter when the sheet is closed
+watch(isSheetOpen, (isOpen) => {
+  if (!isOpen && route.query.action === 'new') {
+    // Use nextTick to ensure we don't trigger navigation during a render cycle
+    nextTick(() => {
+      router.replace({ query: { ...route.query, action: undefined } })
+    })
+  }
 })
 
 const searchQuery = ref('')
 const filterAllocation = ref<string>('ALL')
-const isSheetOpen = ref(false)
 const isEditing = ref(false)
 const isSaving = ref(false)
 
@@ -174,10 +202,6 @@ const deleteItem = async (id: number) => {
           Manage massage equipment, tools, and consumable supplies for CSU-MIMS.
         </p>
       </div>
-      <Button @click="openAddModal" :disabled="isLoading">
-        <Plus class="mr-2 h-4 w-4" />
-        Add New Item
-      </Button>
     </div>
 
     <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
@@ -358,13 +382,21 @@ const deleteItem = async (id: number) => {
 
               <Field>
                 <FieldLabel for="unit" class="font-semibold">Unit Type</FieldLabel>
-                <Input 
+                <select 
                   id="unit" 
                   v-model="currentItem.unit" 
-                  placeholder="e.g. bottles, pcs" 
-                  required 
-                  class="bg-muted/40 hover:bg-muted/60 focus:bg-background transition-colors"
-                />
+                  class="flex h-10 w-full items-center justify-between whitespace-nowrap rounded-md border border-input bg-muted/40 hover:bg-muted/60 px-3 py-2 text-sm shadow-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring focus:bg-background transition-colors"
+                  required
+                >
+                  <option value="pcs">pcs</option>
+                  <option value="bottles">bottles</option>
+                  <option value="ml">ml</option>
+                  <option value="liters">liters</option>
+                  <option value="sets">sets</option>
+                  <option value="packs">packs</option>
+                  <option value="boxes">boxes</option>
+                  <option value="gal">gal</option>
+                </select>
               </Field>
             </div>
           </div>

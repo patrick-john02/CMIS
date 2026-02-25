@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, watch, nextTick } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 import { Plus, Search, ClipboardList, Loader2, AlertCircle } from 'lucide-vue-next'
 import { toast } from 'vue-sonner'
 
@@ -22,16 +23,43 @@ import { useItems } from '@/composables/useItems'
 const { stockOuts, isLoading: stockOutsLoading, fetchStockOuts, createStockOut } = useStockOuts()
 const { items, fetchItems } = useItems()
 
+const route = useRoute()
+const router = useRouter()
+
 // Fetch required data from DRF on mount
 onMounted(async () => {
   await Promise.all([
     fetchItems(),
     fetchStockOuts()
   ])
+  // Check query on mount
+  if (route.query.action === 'record') {
+    openAddModal()
+  }
+})
+
+const isSheetOpen = ref(false)
+
+// Watch for query parameters to trigger the add modal when they change
+watch(
+  () => route.query.action,
+  (action) => {
+    if (action === 'record') {
+      openAddModal()
+    }
+  }
+)
+
+// Clear the query parameter when the sheet is closed
+watch(isSheetOpen, (isOpen) => {
+  if (!isOpen && route.query.action === 'record') {
+    nextTick(() => {
+      router.replace({ query: { ...route.query, action: undefined } })
+    })
+  }
 })
 
 const searchQuery = ref('')
-const isSheetOpen = ref(false)
 const isSaving = ref(false)
 
 // Form state matching DRF StockOut transaction payload

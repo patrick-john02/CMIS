@@ -11,24 +11,20 @@ const isLoginPage = computed(() => route.name === 'Login')
 </script>
 
 <template>
-  <template v-if="!isLoginPage">
-    <SidebarProvider>
-      <div class="flex min-h-svh w-full">
-        <AppSidebar />
-        <SidebarInset>
-          <main class="flex-1 p-6 overflow-y-auto">
-            <router-view />
-          </main>
-        </SidebarInset>
-      </div>
-    </SidebarProvider>
-  </template>
+  <SidebarProvider v-if="!isLoginPage">
+    <div class="flex min-h-svh w-full">
+      <AppSidebar />
+      <SidebarInset>
+        <main class="flex-1 p-6 overflow-y-auto">
+          <router-view />
+        </main>
+      </SidebarInset>
+    </div>
+  </SidebarProvider>
 
-  <template v-else>
-    <main class="min-h-svh">
-      <router-view />
-    </main>
-  </template>
+  <main v-else class="min-h-svh">
+    <router-view />
+  </main>
 
   <Toaster position="top-right" richColors expand />
 </template>

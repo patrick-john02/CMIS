@@ -58,8 +58,8 @@ const data = {
       url: "/stockout",
       icon: ClipboardList,
       items: [
-        { title: "Record Stock-Out", url: "/stockout?action=record" },
-        // { title: "Transaction History", url: "/stockout" },
+        { title: "Record Stock In", url: "/inventory?action=new" },
+        { title: "Record Stock Out", url: "/stockout?action=record" },
       ],
     },
   ],
